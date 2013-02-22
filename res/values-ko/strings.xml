@@ -125,7 +125,7 @@
     <!-- Preferences - Weather -->
     <string name="weather_enabled">활성화</string>
     <string name="weather_enable">날씨 설정</string>
-    <string name="weather_use_custom_location">위치 성정</string>
+    <string name="weather_use_custom_location">위치 설정</string>
     <string name="weather_geolocated">네트워크를 사용하여 위치 정보</string>
     <string name="weather_custom_location_dialog_title">위치를 입력하십시오</string>
     <string name="weather_custom_location_hint">도시, 주/나라</string>
