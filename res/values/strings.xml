@@ -21,6 +21,7 @@
     <string name="unknown">Unknown</string>
     <string name="cancel">Cancel</string>
     <string name="loading_indicator">Loading widget\u2026</string>
+    <string name="menu_done">Done</string>
 
     <!-- Formating strings for widget clock -->
     <string name="widget_12_hours_format_h" translatable="false">h</string>
@@ -141,8 +142,10 @@
     <string name="weather_retrieve_location_dialog_enable_button">Enable</string>
     <string name="weather_invert_lowhigh">Invert low/high temperatures</string>
     <string name="weather_progress_title">Verifying location</string>
-    <string name="weather_alternate_icons_title">Use alternate icons</string>
-    <string name="weather_alternate_icons_summary">Select to toggle between the default (White) and the alternate (Color) icons</string>
+    <string name="weather_alternate_icons_title">Use color icons</string>
+    <string name="weather_alternate_icons_summary">Select to toggle between the default (Color) and the alternate (White) icons</string>
+    <string name="weather_show_when_minimized_title">Show when minimized</string>
+    <string name="weather_show_when_minimized_summary">Display summary weather information when the widget is minimized</string>
 
     <!-- Preferences - Calendar -->
     <string name="calendar_title">Display next event</string>
