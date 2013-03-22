@@ -48,9 +48,14 @@ public class ClockWidgetService extends IntentService {
 
     public static final String ACTION_REFRESH = "com.cyanogenmod.lockclock.action.REFRESH_WIDGET";
     public static final String ACTION_REFRESH_CALENDAR = "com.cyanogenmod.lockclock.action.REFRESH_CALENDAR";
+    public static final String ACTION_HIDE_CALENDAR = "com.cyanogenmod.lockclock.action.HIDE_CALENDAR";
+
+    // This needs to be static to persist between refreshes until explicitly changed by an intent
+    private static boolean mHideCalendar = false;
 
     private int[] mWidgetIds;
     private AppWidgetManager mAppWidgetManager;
+
     public ClockWidgetService() {
         super("ClockWidgetService");
     }
@@ -67,12 +72,22 @@ public class ClockWidgetService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (D) Log.d(TAG, "Got intent " + intent);
-        if (intent != null && ACTION_REFRESH_CALENDAR.equals(intent.getAction())) {
-            if (D) Log.v(TAG, "Forcing a calendar refresh");
-            mAppWidgetManager.notifyAppWidgetViewDataChanged(mWidgetIds, R.id.calendar_list);
-        }
 
         if (mWidgetIds != null && mWidgetIds.length != 0) {
+            // Check passed in intents
+            if (intent != null) {
+                if (ACTION_HIDE_CALENDAR.equals(intent.getAction())) {
+                    if (D) Log.v(TAG, "Force hiding the calendar panel");
+                    // Explicitly hide the panel since we received a broadcast indicating no events
+                    mHideCalendar = true;
+                } else if (ACTION_REFRESH_CALENDAR.equals(intent.getAction())) {
+                    if (D) Log.v(TAG, "Forcing a calendar refresh");
+                    // Start with the panel not explicitly hidden
+                    // If there are no events, a broadcast to the service will hide the panel
+                    mHideCalendar = false;
+                    mAppWidgetManager.notifyAppWidgetViewDataChanged(mWidgetIds, R.id.calendar_list);
+                }
+            }
             refreshWidget();
         }
     }
@@ -102,7 +117,7 @@ public class ClockWidgetService extends IntentService {
                 showCalendar = false;
             } else {
                 remoteViews = new RemoteViews(getPackageName(), R.layout.appwidget);
-                showCalendar = Preferences.showCalendar(this);
+                showCalendar = Preferences.showCalendar(this) && !mHideCalendar;
             }
 
             // Always Refresh the Clock widget
@@ -140,10 +155,8 @@ public class ClockWidgetService extends IntentService {
             }
 
             // Hide the calendar panel if there is no space for it
-            if (showCalendar) {
-                boolean canFitCalendar = WidgetUtils.canFitCalendar(this, id, digitalClock);
-                remoteViews.setViewVisibility(R.id.calendar_panel, canFitCalendar ? View.VISIBLE : View.GONE);
-            }
+            boolean shouldDisplayCalendar = showCalendar && WidgetUtils.canFitCalendar(this, id, digitalClock);
+            remoteViews.setViewVisibility(R.id.calendar_panel, shouldDisplayCalendar ? View.VISIBLE : View.GONE);
 
             // Do the update
             mAppWidgetManager.updateAppWidget(id, remoteViews);
